@@ -12,7 +12,9 @@ from api.tasks.function_names import FunctionNames
 setup_logging()
 
 # Now import ARQ and task dependencies
+# pyrefly: ignore [missing-import]
 from arq import create_pool
+# pyrefly: ignore [missing-import]
 from arq.connections import ArqRedis, RedisSettings
 
 parsed_url = urlparse(REDIS_URL)

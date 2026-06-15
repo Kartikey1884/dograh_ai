@@ -820,6 +820,9 @@ async def _run_pipeline(
     register_audio_data_handler(audio_buffer, workflow_run_id, in_memory_audio_buffer)
 
     try:
+        from api.services.pipecat.tracing_config import set_current_session_id, set_current_user_id
+        set_current_session_id(workflow_run_id)
+        set_current_user_id(user_id)
         # Run the pipeline
         await run_pipeline_worker(task)
         logger.info(f"Task completed for run {workflow_run_id}")

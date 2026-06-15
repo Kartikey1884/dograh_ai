@@ -90,12 +90,25 @@ class OpenAIEmbeddingService(BaseEmbeddingService):
         """
         self._ensure_api_key_configured()
 
+        from opentelemetry import trace
+        tracer = trace.get_tracer(__name__)
+
         try:
-            response = await self.client.embeddings.create(
-                input=texts,
-                model=self.model_id,
-            )
-            return [item.embedding for item in response.data]
+            with tracer.start_as_current_span(
+                "openai.embeddings.create",
+                attributes={
+                    "langfuse.observation.type": "generation",
+                    "langfuse.model": self.model_id,
+                }
+            ) as span:
+                response = await self.client.embeddings.create(
+                    input=texts,
+                    model=self.model_id,
+                )
+                if hasattr(response, "usage") and response.usage:
+                    span.set_attribute("gen_ai.usage.input_tokens", response.usage.prompt_tokens)
+                    span.set_attribute("gen_ai.usage.total_tokens", response.usage.total_tokens)
+                return [item.embedding for item in response.data]
         except Exception as e:
             logger.error(f"Error generating OpenAI embeddings: {e}")
             raise

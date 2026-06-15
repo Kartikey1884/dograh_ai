@@ -12,20 +12,38 @@ from api.constants import (
 )
 from pipecat.utils.run_context import get_current_org_id
 from pipecat.utils.tracing.setup import setup_tracing
+import contextvars
 
 _tracing_initialized = False
 _org_routing_exporter = None
 
+_current_session_id = contextvars.ContextVar("current_session_id", default=None)
+_current_user_id = contextvars.ContextVar("current_user_id", default=None)
+
+def set_current_session_id(session_id: str | int | None):
+    _current_session_id.set(str(session_id) if session_id is not None else None)
+
+def set_current_user_id(user_id: str | int | None):
+    _current_user_id.set(str(user_id) if user_id is not None else None)
 
 class _OrgAttributeSpanProcessor(SpanProcessor):
     """Stamps each span with the current org_id from the async context var."""
 
     def on_start(self, span, parent_context=None):
+        # pyrefly: ignore [missing-import]  
         from pipecat.utils.run_context import get_current_org_id
 
         org_id = get_current_org_id()
         if org_id:
             span.set_attribute("dograh.org_id", str(org_id))
+        
+        session_id = _current_session_id.get()
+        if session_id:
+            span.set_attribute("langfuse.session.id", session_id)
+            
+        user_id = _current_user_id.get()
+        if user_id:
+            span.set_attribute("langfuse.user.id", user_id)
 
     def on_end(self, span):
         pass

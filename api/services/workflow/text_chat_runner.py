@@ -7,6 +7,7 @@ from typing import Any
 
 from fastapi.encoders import jsonable_encoder
 from loguru import logger
+# pyrefly: ignore [missing-import]
 from pipecat.frames.frames import (
     BotStoppedSpeakingFrame,
     CancelFrame,
@@ -21,8 +22,11 @@ from pipecat.frames.frames import (
     TTSSpeakFrame,
     TTSStoppedFrame,
 )
+# pyrefly: ignore [missing-import]
 from pipecat.pipeline.pipeline import Pipeline
+# pyrefly: ignore [missing-import]
 from pipecat.processors.aggregators.llm_context import LLMContext
+# pyrefly: ignore [missing-import]
 from pipecat.processors.aggregators.llm_response_universal import (
     LLMAssistantAggregatorParams,
     LLMContextAggregatorPair,
@@ -537,6 +541,9 @@ async def execute_text_chat_pending_turn(
         conversation_type="text",
         additional_span_attributes=trace_span_attributes,
     )
+    from api.services.pipecat.tracing_config import set_current_session_id, set_current_user_id
+    set_current_session_id(workflow_run_id)
+    set_current_user_id(workflow_run.workflow.user.id if workflow_run.workflow.user else None)
     runner_task = asyncio.create_task(run_pipeline_worker(task))
 
     engine.set_task(task)
