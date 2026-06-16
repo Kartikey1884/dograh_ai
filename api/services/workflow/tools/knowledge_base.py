@@ -264,6 +264,7 @@ async def _perform_retrieval(
                 }
                 chunks.append(chunk_info)
 
+        print(f"--- FLOW TRACE: Agent called knowledge base (KB) with query='{query}'")
         logger.info(
             f"Knowledge base retrieval: query='{query}', "
             f"results={len(chunks)}, "

@@ -22,6 +22,7 @@ from api.services.workflow.pipecat_engine_context_composer import (
     RECORDING_MARKER,
     TTS_MARKER,
 )
+# pyrefly: ignore [missing-import]
 from pipecat.frames.frames import (
     Frame,
     InterruptionFrame,
@@ -32,6 +33,7 @@ from pipecat.frames.frames import (
     TTSStoppedFrame,
     TTSTextFrame,
 )
+# pyrefly: ignore [missing-import]
 from pipecat.processors.frame_processor import FrameDirection, FrameProcessor
 
 
@@ -244,6 +246,7 @@ class RecordingRouterProcessor(FrameProcessor):
         frames ensure downstream processors (transport, audio buffer, observers)
         treat this as a proper TTS utterance.
         """
+        print(f"--- FLOW TRACE: Agent requested pre-recorded audio playback for recording_id='{recording_id}'")
         logger.info(f"Playing pre-recorded audio: {recording_id}")
 
         result = await self._fetch_recording_audio(recording_id=recording_id)

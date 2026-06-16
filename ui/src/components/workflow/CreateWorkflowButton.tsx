@@ -54,6 +54,7 @@ export function CreateWorkflowButton() {
     };
 
     const handleBlankCanvas = async () => {
+        console.log("--- FLOW TRACE: handleBlankCanvas clicked in CreateWorkflowButton");
         if (isCreating || !user) return;
         setIsCreating(true);
 

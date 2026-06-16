@@ -362,6 +362,7 @@ async def create_workflow(
         request: The create workflow request
         user: The user to create the workflow for
     """
+    print(f"--- FLOW TRACE: create_workflow called with name={request.name}")
     # Auto-mint trigger_path for any trigger node that didn't ship one so
     # clients don't need to generate UUIDs themselves.
     workflow_definition = ensure_trigger_paths(request.workflow_definition)
@@ -382,6 +383,7 @@ async def create_workflow(
         except TriggerPathConflictError as e:
             raise _trigger_conflict_http_exception(workflow_definition, e.trigger_paths)
 
+    print(f"--- FLOW TRACE: calling db_client.create_workflow for name={request.name}")
     workflow = await db_client.create_workflow(
         request.name,
         workflow_definition,
@@ -445,6 +447,7 @@ async def create_workflow_from_template(
     Raises:
         HTTPException: If MPS API call fails
     """
+    print(f"--- FLOW TRACE: create_workflow_from_template called with use_case={request.use_case}, call_type={request.call_type}")
     try:
         # Call MPS API to generate workflow using the client
         if DEPLOYMENT_MODE == "oss":
@@ -480,6 +483,7 @@ async def create_workflow_from_template(
             except TriggerPathConflictError as e:
                 raise HTTPException(status_code=409, detail=str(e))
 
+        print(f"--- FLOW TRACE: calling db_client.create_workflow from template for name={workflow_data.get('name', f'{request.use_case} - {request.call_type}')}")
         workflow = await db_client.create_workflow(
             name=workflow_data.get("name", f"{request.use_case} - {request.call_type}"),
             workflow_definition=workflow_def,

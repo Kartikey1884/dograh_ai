@@ -34,6 +34,7 @@ export default function CreateWorkflowPage() {
     const [activityDescription, setActivityDescription] = useState('');
 
     const handleCreateWorkflow = async () => {
+        console.log("--- FLOW TRACE: handleCreateWorkflow clicked in CreateWorkflowPage with useCase:", useCase, "callType:", callType);
         if (!useCase || !activityDescription) {
             setError('Please fill in all fields');
             return;

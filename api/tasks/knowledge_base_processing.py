@@ -226,7 +226,9 @@ async def process_knowledge_base_document(
 
     except Exception as e:
         logger.error(
-            f"Error processing knowledge base document {document_id}: {e}",
+            "Error processing knowledge base document {id}: {e}",
+            id=document_id,
+            e=str(e),
             exc_info=True,
         )
         await db_client.update_document_status(

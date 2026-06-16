@@ -238,6 +238,7 @@ async def execute_http_tool(
     elif method in ("GET", "DELETE") and resolved_arguments:
         params = resolved_arguments
 
+    print(f"--- FLOW TRACE: Agent called custom API tool '{tool.name}' with method={method} url={url}")
     logger.info(
         f"Executing custom tool '{tool.name}' ({tool.tool_uuid}): {method} {url}"
     )
